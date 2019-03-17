@@ -27,7 +27,15 @@
 
 typedef long long ll;
 
-int findPageHit(ll *frame_list, ll no_of_frames, ll target); // @TODO
+int findPageHit(ll *frame_list, ll no_of_frames, ll target)
+{
+    for(int i = 0; i < no_of_frames; i++)
+    {
+        if(frame_list[i] == target)
+            return 1;
+    }
+    return 0;
+}
 
 void populatePages(ll *virtual_memory_pages, ll no_of_pages)
 {
@@ -39,25 +47,44 @@ int main(int argc, const char **argv)
 {
     srand(time(NULL));
     ll no_of_pages;
-    printf("Enter the page-reference string ");
-    scanf("%lld", &no_of_pages);
-    ll *virtual_memory_pages = (ll *)malloc(sizeof(ll) * no_of_pages);
-    populatePages(virtual_memory_pages, no_of_pages);
-    // DEBUG
-    // for(int i=0; i < no_of_pages; i++)
-    //     printf("%lld ", virtual_memory_pages[i]);
-    // DEBUG ENDS
-
+    ll *virtual_memory_pages;
+    if(argc == 1)
+    {
+        printf("Enter the number of pages in virtual memory ");
+        scanf("%lld", &no_of_pages);
+        virtual_memory_pages = (ll *)malloc(sizeof(ll) * no_of_pages);
+        populatePages(virtual_memory_pages, no_of_pages);
+    }
+    else
+    {
+        no_of_pages = argc - 1;
+        virtual_memory_pages = (ll *)malloc(sizeof(ll) * no_of_pages);
+        int index = 0;
+        for(int i = 1; i < argc; i++)
+            virtual_memory_pages[index++] = atoll(argv[i]);
+    }
     ll no_of_frames;
     printf("Enter the number of frames ");
     scanf("%lld", &no_of_frames);
     ll *frame_list = (ll *)malloc(no_of_frames * sizeof(ll));
-    memset(frame_list, -1, no_of_frames);
+    memset(frame_list, -1, no_of_frames * sizeof(ll));
 
-    // DEBUG @FIX BUG HERE
-    ll i;
-    FORN(i, no_of_frames) debugi(frame_list[i]);
-    // DEBUG ENDS
+    ll count_page_hit, count_page_fault;
+    count_page_hit = count_page_fault = 0;
+    
+    ll last = -1;
+    for(int i = 0; i < no_of_pages; i++)
+    {
+        if(findPageHit(frame_list, no_of_frames, virtual_memory_pages[i]))
+            count_page_hit++;
+        else
+        {
+            frame_list[++last % no_of_frames] = virtual_memory_pages[i];
+            count_page_fault++;
+        }
+    }
 
+    printf("Number of Page hits are %lld\n", count_page_hit);
+    printf("Number of Page faults are %lld\n", count_page_fault);
     return 0;
 }
