@@ -27,6 +27,9 @@
 
 typedef long long ll;
 
+int random_flag = 0; //false
+void showInputs(ll *virtual_memory_pages, ll no_of_pages, ll no_of_frames);
+void drawLine();
 int findPageHit(ll *frame_list, ll no_of_frames, ll target)
 {
     for(int i = 0; i < no_of_frames; i++)
@@ -54,6 +57,7 @@ int main(int argc, const char **argv)
         scanf("%lld", &no_of_pages);
         virtual_memory_pages = (ll *)malloc(sizeof(ll) * no_of_pages);
         populatePages(virtual_memory_pages, no_of_pages);
+        random_flag = 1; //true
     }
     else
     {
@@ -66,6 +70,7 @@ int main(int argc, const char **argv)
     ll no_of_frames;
     printf("Enter the number of frames ");
     scanf("%lld", &no_of_frames);
+    showInputs(virtual_memory_pages, no_of_pages, no_of_frames);
     ll *frame_list = (ll *)malloc(no_of_frames * sizeof(ll));
     memset(frame_list, -1, no_of_frames * sizeof(ll));
 
@@ -87,4 +92,25 @@ int main(int argc, const char **argv)
     printf("Number of Page hits are %lld\n", count_page_hit);
     printf("Number of Page faults are %lld\n", count_page_fault);
     return 0;
+}
+
+void showInputs(ll *virtual_memory_pages, ll no_of_pages, ll no_of_frames)
+{
+    printf("You have entered the following data....");
+    drawLine();
+    printf("Number of pages\t\t\t: %lld\n", no_of_pages);
+    if(random_flag) printf("Random ");
+    else            printf("Custom ");
+    printf("Virtual Memory Pages \t: ");
+    for(int i = 0; i < no_of_pages; i++)
+        printf("%lld ", virtual_memory_pages[i]);
+    printf("\nNumber of frames\t\t: %lld", no_of_frames);
+    drawLine();
+}
+void drawLine()
+{
+    printf("\n");
+    for(int i = 0; i < 30; i++)
+        printf("-");
+    printf("\n");
 }

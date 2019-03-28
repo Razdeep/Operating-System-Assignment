@@ -28,7 +28,7 @@ Write a program that implements the FIFO page replacement algorithm. First, gene
 - [Task 22](./TASK22/README.md) Click here to navigate to the TASK22 guide
 
 ## Want to compile manually?
-- Compile by firing the following command in the respected TASK directories
+- Compile by firing the following command in the respective TASK directories
 ```sh
 $ gcc main.c -lphread
 ```
