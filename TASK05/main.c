@@ -22,10 +22,41 @@
  * the student will come back at a later time.
  * 
  */
-#include <stdio.h>
 
-int main(int argc, const char** argv)
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+
+typedef long long ll;
+
+void *studentProcess(void *identity)
 {
+    int *id = (int*)identity;
+
+}
+
+void *teacherProcess()
+{
+
+}
+int main(int argc, const char **argv)
+{
+    ll no_of_students;
+    printf("Enter the number of students ");
+    scanf("%lld", &no_of_students);
+
+    pthread_t *student_thread = (pthread_t *)malloc(no_of_students * sizeof(pthread_t));
+    pthread_t teacher_thread;
+    
+    // Creating threads of teacher and student
+    pthread_create(&teacher_thread, NULL, &teacherProcess, NULL);
+    for(int i = 0; i < no_of_students; i++)
+        pthread_create(&student_thread[i], NULL, &studentProcess, NULL);  
+    
+    // Joining the threads to the main process
+    pthread_join(teacher_thread, NULL);
+    for(int i = 0; i < no_of_students; i++)
+        pthread_join(student_thread[i], NULL);
 
     return 0;
 }

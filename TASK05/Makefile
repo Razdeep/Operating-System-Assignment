@@ -5,7 +5,7 @@ credits:
 	echo -e "   By Rajdeep Roy Chowdhury\n"
 
 all: credits
-	$(CC) main.c
+	$(CC) main.c -lpthread
 
 clean:
 	rm -rf a.out
