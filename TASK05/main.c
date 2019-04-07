@@ -27,34 +27,72 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <semaphore.h>
+#include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
 #endif
+#define DEBUGI(identifier, x) printf("DEBUG : %s is %d\n", identifier, x)
 
 typedef long long ll;
 
-pthread_mutex_t desk_chair; // The chair for student infront of Teacher's table
-const int MAX_WAITING_CHAIRS = 3;
+#define MAX_WAITING_CHAIRS 3
+pthread_mutex_t mutex; // For mutual exclusion among the processes
+ll no_of_students_waiting = 0;
+ll next_teach_index = 0;
+int waiting_queue[MAX_WAITING_CHAIRS];
+sem_t student_sem, teacher_sem;
 
 void *studentProcess(void *identity)
 {
     int *id = (int *)identity;
+    DEBUGI("ID", *id);
     while (1)
     {
+        sleep(1);
+        pthread_mutex_lock(&mutex);
+        if(no_of_students_waiting + 1 < MAX_WAITING_CHAIRS)
+        {
+            printf("Student %d is sitting in the waiting seat queue\n", *id);
+            waiting_queue[no_of_students_waiting++ % MAX_WAITING_CHAIRS] = *id;
+            printf("%lld students are waiting in the seat queue\n", no_of_students_waiting);
+            
+            pthread_mutex_unlock(&mutex);
 
+            sem_post(&student_sem);
+            sem_wait(&teacher_sem);
+        }
+        else{
+            pthread_mutex_unlock(&mutex);
+            printf("Student %d is doing programming at home\n", *id);
+        }
+        pthread_mutex_unlock(&mutex);
+        sleep(1);
     }
+    
+
 }
 
 void *teacherProcess()
 {
     while (1)
     {
-        printf("---------Teacher waken up by student--------\n");
-        pthread_mutex_lock(&desk_chair);
+        sleep(1);
+        sem_wait(&student_sem);
+        no_of_students_waiting--;
+        pthread_mutex_lock(&mutex);
 
-        pthread_mutex_unlock(&desk_chair);
+        if(no_of_students_waiting > 0)
+        {
+            printf("---------Teacher waken up by student--------\n");
+            printf("Teacher is teaching student %d\n", waiting_queue[next_teach_index++ % MAX_WAITING_CHAIRS]);
+        }
+        else{
+            printf("Teacher is sleeping\n");
+        }
+        pthread_mutex_unlock(&mutex);
+        sem_post(&teacher_sem);
         sleep(1);
     }
 }
@@ -79,12 +117,16 @@ int main(int argc, const char **argv)
     pthread_t *student_thread = (pthread_t *)malloc(no_of_students * sizeof(pthread_t));
     pthread_t teacher_thread;
 
-    pthread_mutex_init(&desk_chair, NULL);
+    // Initialization of mutex and semaphores
+    pthread_mutex_init(&mutex, NULL);
+    sem_init(&student_sem, 0, 0); // pshared = 0(mid arg) means it'll be shared among only one process
+    sem_init(&teacher_sem, 0, 1);
+    memset(waiting_queue, -1, sizeof(int) * MAX_WAITING_CHAIRS);
 
     // Creating threads of teacher and student
     pthread_create(&teacher_thread, NULL, &teacherProcess, NULL);
     for (int i = 0; i < no_of_students; i++)
-        pthread_create(&student_thread[i], NULL, &studentProcess, NULL);
+        pthread_create(&student_thread[i], NULL, &studentProcess, &i);
 
     // Joining the threads to the main process
     pthread_join(teacher_thread, NULL);
