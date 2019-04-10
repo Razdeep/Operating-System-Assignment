@@ -11,8 +11,17 @@ $ make all
 ## Compiling using Command-line Interface
 For compiling manually using the terminal, execute the following command
 ```sh
-$ gcc main.c -lpthread
+$ gcc main.c
 ```
+## Modes of Execution
+
+### 1. Random Pages Generation Mode
+This mode is triggered whenever the user **does not pass any command line Argument**. The page list is automatically generated.
+
+### 2. User Input Mode
+This is mode is put to action whenever we pass **integer** type Arguments in the shell.
+
+For more information refer to the instructions mentioned below
 
 ## Program Execution
 ### 1. Using arguments as input
@@ -31,3 +40,10 @@ For executing the compiled program, use the following command
 ```sh
 $ ./a.out
 ```
+
+## Screenshots
+### 1. Random Mode
+<img src = "../assets/task22a.png">
+
+### 2. User Input Mode
+<img src = "../assets/task22b.png">

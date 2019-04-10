@@ -33,7 +33,6 @@
 #else
 #include <unistd.h>
 #endif
-#define DEBUGI(identifier, x) printf("DEBUG : %s is %d\n", identifier, x)
 
 typedef long long ll;
 
@@ -49,10 +48,8 @@ void *studentProcess(void *identity)
 {
     int *identity_pointer = (int *)identity;
     int id = *identity_pointer;
-    // DEBUGI("ID", id);
     while (1)
     {
-        // sleep(1);
         if(no_of_students_waiting < MAX_WAITING_CHAIRS)
         {
             sem_wait(&student_sem);
@@ -121,7 +118,6 @@ int main(int argc, const char **argv)
     pthread_t teacher_thread;
 
     // Initialization of mutex and semaphores
-    // pthread_mutex_init(&mutex, NULL);
     sem_init(&student_sem, 0, 3); // pshared = 0(mid arg) means it'll be shared among only one process
     sem_init(&teacher_sem, 0, 1);
     memset(waiting_queue, -1, sizeof(int) * MAX_WAITING_CHAIRS);

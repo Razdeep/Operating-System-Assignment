@@ -32,3 +32,6 @@ For executing the compiled program, use the following command
 ```sh
 $ ./a.out
 ```
+
+## Screenshots
+<img src = "../assets/task05.png"/>
